@@ -1,9 +1,9 @@
 import logging
 import threading
-from typing import List
 
 from requests import get, Response
 
+from wiretap.analyzer import GenericMessageAnalyzer
 from wiretap.utils import Message
 
 logging.basicConfig(
@@ -11,13 +11,13 @@ logging.basicConfig(
     datefmt='%H:%M:%S'
 )
 log = logging.getLogger(__name__)
-log.setLevel(logging.ERROR)
+log.setLevel(logging.INFO)
 
 
 class TelegramListener(threading.Thread):
     """ basic polling-based listener for Telegram updates """
 
-    def __init__(self, bot_token: str, poll_delay: int = 1):
+    def __init__(self, bot_token: str, analyzer: GenericMessageAnalyzer, poll_delay: int = 1):
         """
         :param bot_token: the token that identifies the bot
         :param poll_delay:
@@ -29,6 +29,7 @@ class TelegramListener(threading.Thread):
         self.token: str = bot_token
         self.poll_delay: int = poll_delay
         self.last_update: int = -1
+        self.analyzer = analyzer
 
     def get_updates(self) -> dict:
         """ returns updates received by the bot since last call of this method """
@@ -57,7 +58,9 @@ class TelegramListener(threading.Thread):
                 for update in updates_result["result"]:
                     self.last_update = update["update_id"] + 1
                     message: Message = Message(update)
-                    print(message)
+                    self.analyzer.analyze(message)
+            else:
+                log.error(f"getUpdates error: {updates_result.get('error', 'Unknown error')}")
             is_killed = self._kill.wait(self.poll_delay)
             if is_killed:
                 log.warning("Listener killed")

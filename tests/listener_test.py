@@ -1,9 +1,23 @@
+from typing import List
+
 from tests.test_utils import get_test_config
+from wiretap.analyzer import GenericMessageAnalyzer, AnalyzerAction
 from wiretap.listener import TelegramListener
+from wiretap.utils import Message
+
+
+ACTION = AnalyzerAction(r"test", True, lambda m: print(f"message contains \"test\": {m.text}"))
+
+
+class TestAnalyzer(GenericMessageAnalyzer):
+
+    def filter_actions(self, message: Message) -> List[AnalyzerAction]:
+        return [ACTION]
 
 
 LISTENER = TelegramListener(
-    get_test_config()["token"]
+    get_test_config()["token"],
+    TestAnalyzer()
 )
 
 

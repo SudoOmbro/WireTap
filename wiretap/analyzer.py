@@ -1,13 +1,21 @@
 import re
-import threading
 from typing import List, Callable, Any
 
 from wiretap.utils import Message
 
 
 class AnalyzerAction:
+    """ An action that can be executed conditionally (or not) on message reception """
 
     def __init__(self, regex: str or None, lower: bool,  action: Callable[[Message], Any]):
+        """
+        :param regex: the regex to search for in the received message text, use None to avoid using regex
+        :param lower: whether to call lower() on the received message text
+        :param action:
+            what to do with the received message.
+            Note: if the regex is set to None,
+            then the return value of the action will determine list iteration termination on the list of actions.
+        """
         self.regex = regex
         self.action = action
         if regex:
@@ -15,27 +23,32 @@ class AnalyzerAction:
         else:
             self.run = self.run_no_regex
 
-    def run_with_regex(self, message: Message):
-        if re.match(self.regex, message.text):
+    def run_with_regex(self, message: Message) -> bool:
+        if re.search(self.regex, message.text):
             self.action(message)
+            return True
+        return False
 
-    def run_with_regex_lower(self, message: Message):
-        if re.match(self.regex, message.lower_text):
+    def run_with_regex_lower(self, message: Message) -> bool:
+        if re.search(self.regex, message.lower_text):
             self.action(message)
+            return True
+        return False
 
-    def run_no_regex(self, message: Message):
-        self.action(message)
+    def run_no_regex(self, message: Message) -> bool:
+        return self.action(message)
 
 
 class GenericMessageAnalyzer:
-
-    def __init__(self):
-        self.lock = threading.Lock()
+    """ The most barebones version of a message analyzer, filter_action must be implemented """
 
     def filter_actions(self, message: Message) -> List[AnalyzerAction]:
+        """ return a list of actions to be checked against the received message """
         raise NotImplemented
 
     def analyze(self, message: Message):
+        """ analyze the received message """
         actions = self.filter_actions(message)
         for action in actions:
-            action.run(message)
+            if action.run(message):
+                return
