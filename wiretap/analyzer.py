@@ -13,8 +13,7 @@ class AnalyzerAction:
         :param lower: whether to call lower() on the received message text
         :param action:
             what to do with the received message.
-            Note: if the regex is set to None,
-            then the return value of the action will determine list iteration termination on the list of actions.
+            The return value of the action will determine list iteration termination on the list of actions.
         """
         self.regex = regex
         self.action = action
@@ -25,14 +24,12 @@ class AnalyzerAction:
 
     def run_with_regex(self, message: Message) -> bool:
         if re.search(self.regex, message.text):
-            self.action(message)
-            return True
+            return self.action(message)
         return False
 
     def run_with_regex_lower(self, message: Message) -> bool:
         if re.search(self.regex, message.lower_text):
-            self.action(message)
-            return True
+            return self.action(message)
         return False
 
     def run_no_regex(self, message: Message) -> bool:
