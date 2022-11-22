@@ -1,4 +1,5 @@
 import re
+import abc
 from typing import List, Callable, Any
 
 from wiretap.utils import Message
@@ -7,7 +8,7 @@ from wiretap.utils import Message
 class AnalyzerAction:
     """ An action that can be executed conditionally (or not) on message reception """
 
-    def __init__(self, regex: str or None, lower: bool,  action: Callable[[Message], Any]):
+    def __init__(self, regex: str | None, lower: bool,  action: Callable[[Message], Any]):
         """
         :param regex: the regex to search for in the received message text, use None to avoid using regex
         :param lower: whether to call lower() on the received message text
@@ -36,9 +37,10 @@ class AnalyzerAction:
         return self.action(message)
 
 
-class GenericMessageAnalyzer:
+class AbstractMessageAnalyzer(abc.ABC):
     """ The most barebones version of a message analyzer, filter_action must be implemented """
 
+    @abc.abstractmethod
     def filter_actions(self, message: Message) -> List[AnalyzerAction]:
         """ return a list of actions to be checked against the received message """
         raise NotImplemented

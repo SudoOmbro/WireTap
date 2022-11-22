@@ -3,7 +3,7 @@ import threading
 
 from requests import get, Response
 
-from wiretap.analyzer import GenericMessageAnalyzer
+from wiretap.analyzer import AbstractMessageAnalyzer
 from wiretap.utils import Message
 
 logging.basicConfig(
@@ -17,7 +17,7 @@ log.setLevel(logging.INFO)
 class TelegramListener(threading.Thread):
     """ basic polling-based listener for Telegram updates """
 
-    def __init__(self, bot_token: str, analyzer: GenericMessageAnalyzer, poll_delay: int = 1):
+    def __init__(self, bot_token: str, analyzer: AbstractMessageAnalyzer, poll_delay: int = 1):
         """
         :param bot_token: the token that identifies the bot
         :param poll_delay:

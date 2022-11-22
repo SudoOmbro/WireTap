@@ -1,7 +1,7 @@
 from typing import List
 
 from tests.test_utils import get_test_config
-from wiretap.analyzer import GenericMessageAnalyzer, AnalyzerAction
+from wiretap.analyzer import AbstractMessageAnalyzer, AnalyzerAction
 from wiretap.listener import TelegramListener
 from wiretap.utils import Message
 
@@ -9,7 +9,7 @@ from wiretap.utils import Message
 ACTION = AnalyzerAction(r"test", True, lambda m: print(f"message contains \"test\": {m.text}"))
 
 
-class TestAnalyzer(GenericMessageAnalyzer):
+class TestAnalyzer(AbstractMessageAnalyzer):
 
     def filter_actions(self, message: Message) -> List[AnalyzerAction]:
         return [ACTION]
