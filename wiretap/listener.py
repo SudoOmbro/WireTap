@@ -11,7 +11,6 @@ logging.basicConfig(
     datefmt='%H:%M:%S'
 )
 log = logging.getLogger(__name__)
-log.setLevel(logging.INFO)
 
 
 class TelegramListener(threading.Thread):

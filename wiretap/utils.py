@@ -1,12 +1,4 @@
 import json
-from enum import Enum
-
-
-class ChatType(Enum):
-    PRIVATE = 0
-    GROUP = 1
-    CHANNEL = 2
-    OTHER = 3
 
 
 class Message:
