@@ -28,7 +28,7 @@ class TelegramListener(threading.Thread):
         self.token: str = bot_token
         self.poll_delay: int = poll_delay
         self.last_update: int = -1
-        self.analyzer = analyzer
+        self.analyzer: AbstractMessageAnalyzer = analyzer
 
     def get_updates(self) -> dict:
         """ returns updates received by the bot since last call of this method """
