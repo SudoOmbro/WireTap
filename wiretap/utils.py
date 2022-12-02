@@ -1,6 +1,7 @@
 import json
 from typing import Dict, Tuple
 
+
 UPDATE_TYPE_CONTAINERS_MAP: Dict[str, Tuple[str, str]] = {
     "message": ("text", "from"),
     "channel_post": ("text", "sender_chat")
